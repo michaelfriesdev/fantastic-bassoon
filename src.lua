@@ -3091,11 +3091,35 @@ function Library:keybind(options)
 
 	local methods = {}
 
-	function methods:Set(keycode)
-		options.Keybind = keycode
-		keybindDisplay.Text = (options.Keybind and tostring(options.Keybind.Name):upper()) or "?"
-		keybindDisplay:tween{Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20), Length = 0.05}
-	end
+	local UserInputService = game:GetService("UserInputService")
+
+function methods:Set(input)
+    local name
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        name = "M1" 
+    elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
+        name = "M2"
+    elseif input.UserInputType == Enum.UserInputType.MouseButton3 then
+        name = "M3"
+    elseif input.KeyCode then
+        name = tostring(input.KeyCode)
+    end
+
+    options.Keybind = input
+    keybindDisplay.Text = (name and name:upper()) or "?"
+    keybindDisplay:tween{
+        Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20),
+        Length = 0.05
+    }
+end
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Keyboard 
+       or input.UserInputType.Name:find("MouseButton") then
+        methods:Set(input)
+    end
+end)
+
 
 	return methods
 end
