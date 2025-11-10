@@ -28,6 +28,11 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local HTTPService = game:GetService("HttpService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local placeInfo = MarketplaceService:GetProductInfo(game.PlaceId)
+
+local idgry = game.PlaceId
+local nazwagry = placeInfo.Name:gsub("%s+", "")
 
 local Library = {
 	Themes = {
@@ -432,11 +437,11 @@ function Library:create(options)
 	end
 
 	options = self:set_defaults({
-		Name = "Mercury",
-		Size = UDim2.fromOffset(600, 400),
-		Theme = self.Themes[settings.Theme],
-		Link = "https://github.com/deeeity/mercury-lib"
-	}, options)
+	   Name = "Mercury",
+	   Size = UDim2.fromOffset(600, 400),
+	   Theme = self.Themes[settings.Theme],
+	   Link = "https://roblox.com/games/" .. idgry .. "/" .. nazwagry
+    }, options)
 
 	if getgenv and getgenv().MercuryUI then
 		getgenv():MercuryUI()
