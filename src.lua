@@ -425,27 +425,27 @@ function Library:create(options)
 	}
 
 	if readfile and writefile and isfile then
-		if not isfile("MercurySettings.json") then
-			writefile("MercurySettings.json", HTTPService:JSONEncode(settings))
+		if not isfile("VerseSettings.json") then
+			writefile("VerseSettings.json", HTTPService:JSONEncode(settings))
 		end
-		settings = HTTPService:JSONDecode(readfile("MercurySettings.json"))
+		settings = HTTPService:JSONDecode(readfile("VerseSettings.json"))
 		Library.CurrentTheme = Library.Themes[settings.Theme]
 		updateSettings = function(property, value)
 			settings[property] = value
-			writefile("MercurySettings.json", HTTPService:JSONEncode(settings))
+			writefile("VerseSettings.json", HTTPService:JSONEncode(settings))
 		end
 	end
 
 	options = self:set_defaults({
-	   Name = "Mercury",
+	   Name = "VerseUI",
 	   Size = UDim2.fromOffset(600, 400),
 	   Theme = self.Themes[settings.Theme],
-	   Link = "https://roblox.com/games/" .. idgry .. "/" .. nazwagry
+	   Link = "https://roblox.com/games/" .. idgry .. "/" .. nazwagry .. "/VerseUI"
     }, options)
 
-	if getgenv and getgenv().MercuryUI then
-		getgenv():MercuryUI()
-		getgenv().MercuryUI = nil
+	if getgenv and getgenv().VerseUI then
+		getgenv():VerseUI()
+		getgenv().VerseUI = nil
 	end
 
 
@@ -594,7 +594,7 @@ function Library:create(options)
 	end
 
 	if getgenv then
-		getgenv().MercuryUI = closeUI
+		getgenv().VerseUI = closeUI
 	end
 
 	closeButton.MouseButton1Click:connect(function()
@@ -621,7 +621,7 @@ function Library:create(options)
 		Position = UDim2.new(0, 26, 0.5, 0),
 		BackgroundTransparency = 1,
 		Size = UDim2.new(1, -30, .6, 0),
-		Text = options.Link .. "/home",
+		Text = options.Link .. "/",
 		Theme = {TextColor3 = "WeakText"},
 		TextSize = 14,
 		TextScaled = false,
