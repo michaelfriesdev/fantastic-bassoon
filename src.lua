@@ -685,7 +685,7 @@ function Library:create(options)
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 5, 0.5, 0),
 		Size = UDim2.new(0, 15, 0, 15),
-		Image = "http://www.roblox.com/asset/?id=8569322835",
+		Image = "http://www.roblox.com/asset/?id=117387543472872",
 		Theme = {ImageColor3 = "StrongText"}
 	})
 
@@ -3111,18 +3111,12 @@ function methods:Set(input)
 
 	options.Keybind = input
 	keybindDisplay.Text = (name and name:upper()) or "?"
-	keybindDisplay:tween{
-		Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20),
-		Length = 0.05
-	}
+	keybindDisplay.Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20)
 end
 
 function methods:SetWaiting()
 	keybindDisplay.Text = "..."
-	keybindDisplay:tween{
-		Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20),
-		Length = 0.05
-	}
+	keybindDisplay.Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20)
 
 	local connection
 	connection = UserInputService.InputBegan:Connect(function(input, processed)
@@ -3139,9 +3133,12 @@ function methods:SetWaiting()
 	end)
 end
 
-	return methods
+-- Dodaj obsługę kliknięcia na keybindDisplay
+keybindDisplay.MouseButton1Click:Connect(function()
+	methods:SetWaiting()
+end)
 
-end
+return methods
 
 function Library:prompt(options)
 	options = self:set_defaults({
