@@ -2987,6 +2987,7 @@ function Library:_theme_selector()
 	end
 	self:_resize_tab()
 end
+end
 
 
 function Library:keybind(options)
