@@ -3093,36 +3093,53 @@ function Library:keybind(options)
 
 	local UserInputService = game:GetService("UserInputService")
 
+local UserInputService = game:GetService("UserInputService")
+
+local methods = {}
+
 function methods:Set(input)
-    local name
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        name = "M1" 
-    elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
-        name = "M2"
-    elseif input.UserInputType == Enum.UserInputType.MouseButton3 then
-        name = "M3"
-    elseif input.KeyCode then
-        name = tostring(input.KeyCode)
-    end
+	local name
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		name = "M1"
+	elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
+		name = "M2"
+	elseif input.UserInputType == Enum.UserInputType.MouseButton3 then
+		name = "M3"
+	elseif input.KeyCode and input.KeyCode ~= Enum.KeyCode.Unknown then
+		name = tostring(input.KeyCode.Name)
+	end
 
-    options.Keybind = input
-    keybindDisplay.Text = (name and name:upper()) or "?"
-    keybindDisplay:tween{
-        Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20),
-        Length = 0.05
-    }
+	options.Keybind = input
+	keybindDisplay.Text = (name and name:upper()) or "?"
+	keybindDisplay:tween{
+		Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20),
+		Length = 0.05
+	}
 end
 
-UserInputService.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Keyboard 
-       or input.UserInputType.Name:find("MouseButton") then
-        methods:Set(input)
-    end
-end)
+function methods:SetWaiting()
+	keybindDisplay.Text = "..."
+	keybindDisplay:tween{
+		Size = UDim2.fromOffset(keybindDisplay.TextBounds.X + 20, 20),
+		Length = 0.05
+	}
 
+	local connection
+	connection = UserInputService.InputBegan:Connect(function(input, processed)
+		if processed then return end
 
-	return methods
+		if input.UserInputType == Enum.UserInputType.Keyboard
+		or input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.MouseButton2
+		or input.UserInputType == Enum.UserInputType.MouseButton3 then
+
+			methods:Set(input)
+			connection:Disconnect()
+		end
+	end)
 end
+
+return methods
 
 function Library:prompt(options)
 	options = self:set_defaults({
