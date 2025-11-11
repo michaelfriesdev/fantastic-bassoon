@@ -2874,7 +2874,6 @@ function Library:credit(options)
 end
 
 function Library:_theme_selector()
-
 	local themesCount = 0
 
 	for _ in next, Library.Themes do
@@ -2974,7 +2973,7 @@ function Library:_theme_selector()
 				BackgroundColor3 = themeColors.StrongText
 			}):round(100)
 
-			local colorTertiary = colorSecondary:object("Frame", {
+			local colorWeak = colorSecondary:object("Frame", {
 				Size = UDim2.new(1, -40, 0, 9),
 				BackgroundColor3 = themeColors.WeakText
 			}):round(100)
