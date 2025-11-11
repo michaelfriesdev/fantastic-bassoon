@@ -3139,7 +3139,7 @@ function methods:SetWaiting()
 	end)
 end
 
-return methods
+	return methods
 
 end
 
