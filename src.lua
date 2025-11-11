@@ -3121,6 +3121,8 @@ end)
 
 return methods
 
+end
+
 function Library:prompt(options)
 	options = self:set_defaults({
 		Followup = false,
