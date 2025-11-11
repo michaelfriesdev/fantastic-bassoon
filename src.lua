@@ -31,7 +31,6 @@ local Library = {
 			Main = Color3.fromHSV(262/360, 60/255, 34/255),
 			Secondary = Color3.fromHSV(240/360, 40/255, 63/255),
 			Tertiary = Color3.fromHSV(260/360, 60/255, 148/255),
-
 			StrongText = Color3.fromHSV(0, 0, 1),		
 			WeakText = Color3.fromHSV(0, 0, 172/255)
 		},
@@ -39,7 +38,6 @@ local Library = {
 			Main = Color3.fromRGB(50, 52, 55),
 			Secondary = Color3.fromRGB(80, 82, 85),
 			Tertiary = Color3.fromRGB(226, 183, 20),
-
 			StrongText = Color3.fromHSV(0, 0, 1),		
 			WeakText = Color3.fromHSV(0, 0, 172/255)
 		},
@@ -47,7 +45,6 @@ local Library = {
 			Main = Color3.fromRGB(30, 30, 35),
 			Secondary = Color3.fromRGB(50, 50, 55),
 			Tertiary = Color3.fromRGB(70, 130, 180),
-
 			StrongText = Color3.fromHSV(0, 0, 1),		
 			WeakText = Color3.fromHSV(0, 0, 172/255)
 		},
@@ -55,7 +52,6 @@ local Library = {
 			Main = Color3.fromRGB(37, 35, 33),
 			Secondary = Color3.fromRGB(65, 63, 63),
 			Tertiary = Color3.fromRGB(237, 94, 38),
-
 			StrongText = Color3.fromHSV(0, 0, 1),		
 			WeakText = Color3.fromHSV(0, 0, 172/255)
 		},
@@ -63,13 +59,30 @@ local Library = {
 			Main = Color3.fromRGB(19, 21, 21),
 			Secondary = Color3.fromRGB(65, 63, 63),
 			Tertiary = Color3.fromRGB(51, 153, 137),
-
 			StrongText = Color3.fromHSV(0, 0, 1),        
 			WeakText = Color3.fromHSV(0, 0, 172/255)
 		},
-		Vaporwave = {},
-		OperaGX = {},
-		VisualStudio = {}
+		Vaporwave = {
+			Main = Color3.fromRGB(255, 105, 180),
+			Secondary = Color3.fromRGB(138, 43, 226),
+			Tertiary = Color3.fromRGB(0, 255, 255),
+			StrongText = Color3.fromHSV(0, 0, 1),        
+			WeakText = Color3.fromHSV(0, 0, 172/255)
+		},
+		OperaGX = {
+			Main = Color3.fromRGB(40, 40, 40),
+			Secondary = Color3.fromRGB(60, 60, 60),
+			Tertiary = Color3.fromRGB(255, 85, 0),
+			StrongText = Color3.fromHSV(0, 0, 1),        
+			WeakText = Color3.fromHSV(0, 0, 172/255)
+		},
+		VisualStudio = {
+			Main = Color3.fromRGB(37, 37, 38),
+			Secondary = Color3.fromRGB(45, 45, 48),
+			Tertiary = Color3.fromRGB(0, 122, 204),
+			StrongText = Color3.fromHSV(0, 0, 1),        
+			WeakText = Color3.fromHSV(0, 0, 172/255)
+		}
 	},
 	ColorPickerStyles = {
 		Legacy = 0,
@@ -80,7 +93,6 @@ local Library = {
 		Main = {},
 		Secondary = {},
 		Tertiary = {},
-
 		StrongText = {},
 		WeakText = {}
 	},
@@ -91,7 +103,6 @@ local Library = {
 	ToggleKey = Enum.KeyCode.Home,
 	UrlLabel = nil,
 	Url = nil
-
 }
 Library.__index = Library
 
@@ -114,7 +125,9 @@ end
 function Library:change_theme(toTheme)
 	Library.CurrentTheme = toTheme
 	local c = self:lighten(toTheme.Tertiary, 20)
-	Library.DisplayName.Text = "Welcome, <font color='rgb(" ..  math.floor(c.R*255) .. "," .. math.floor(c.G*255) .. "," .. math.floor(c.B*255) .. ")'> <b>" .. LocalPlayer.DisplayName .. "</b> </font>"
+	if Library.DisplayName then
+		Library.DisplayName.Text = "Welcome, <font color='rgb(" ..  math.floor(c.R*255) .. "," .. math.floor(c.G*255) .. "," .. math.floor(c.B*255) .. ")'> <b>" .. LocalPlayer.DisplayName .. "</b> </font>"
+	end
 	for color, objects in next, Library.ThemeObjects do
 		local themeColor = Library.CurrentTheme[color]
 		for _, obj in next, objects do
@@ -126,7 +139,9 @@ function Library:change_theme(toTheme)
 			elseif colorAlter > 0 then
 				modifiedColor = Library:lighten(themeColor, colorAlter)
 			end
-			element:tween{[property] = modifiedColor}
+			if element and element.tween then
+				element:tween({[property] = modifiedColor})
+			end
 		end
 	end
 end
@@ -159,13 +174,13 @@ function Library:object(class, properties)
 		}, options)
 		callback = callback or function() return end
 
-
 		local ti = TweenInfo.new(options.Length, options.Style, options.Direction)
 		options.Length = nil
 		options.Style = nil 
 		options.Direction = nil
 
-		local tween = TweenService:Create(localObject, ti, options); tween:Play()
+		local tween = TweenService:Create(localObject, ti, options)
+		tween:Play()
 
 		tween.Completed:Connect(function()
 			callback()
@@ -222,7 +237,7 @@ function Library:object(class, properties)
 			if state then
 				self.fadeFrame.BackgroundTransparency = 1
 				self.fadeFrame.Visible = true
-				self.fadeFrame:tween{BackgroundTransparency = 0, Length = length}
+				self.fadeFrame:tween({BackgroundTransparency = 0, Length = length})
 			else
 				self.fadeFrame.BackgroundTransparency = 0
 				self.fadeFrame:tween({BackgroundTransparency = 1, Length = length}, function()
@@ -233,7 +248,6 @@ function Library:object(class, properties)
 	end
 
 	function methods:stroke(color, thickness, strokeMode)
-
 		thickness = thickness or 1
 		strokeMode = strokeMode or Enum.ApplyStrokeMode.Border
 		local stroke = self:object("UIStroke", {
@@ -293,19 +307,19 @@ function Library:object(class, properties)
 
 		local hovered = false
 
-		methods.MouseEnter:connect(function()
+		methods.MouseEnter:Connect(function()
 			hovered = true
 			wait(0.2)
 			if hovered then
-				tooltipContainer:tween{BackgroundTransparency = 0.2, TextTransparency = 0.2}
-				tooltipArrow:tween{ImageTransparency = 0.2}
+				tooltipContainer:tween({BackgroundTransparency = 0.2, TextTransparency = 0.2})
+				tooltipArrow:tween({ImageTransparency = 0.2})
 			end
 		end)
 
-		methods.MouseLeave:connect(function()
+		methods.MouseLeave:Connect(function()
 			hovered = false
-			tooltipContainer:tween{BackgroundTransparency = 1, TextTransparency = 1}
-			tooltipArrow:tween{ImageTransparency = 1}
+			tooltipContainer:tween({BackgroundTransparency = 1, TextTransparency = 1})
+			tooltipArrow:tween({ImageTransparency = 1})
 		end)
 
 		return methods
@@ -330,11 +344,11 @@ function Library:object(class, properties)
 						modifiedColor = Library:lighten(themeColor, colorAlter)
 					end
 					localObject[property] = modifiedColor
-					table.insert(self.ThemeObjects[theme], {methods, property, theme, colorAlter})
+					table.insert(Library.ThemeObjects[theme], {methods, property, theme, colorAlter})
 				else
 					local themeColor = Library.CurrentTheme[obj]
 					localObject[property] = themeColor
-					table.insert(self.ThemeObjects[obj], {methods, property, obj, 0})
+					table.insert(Library.ThemeObjects[obj], {methods, property, obj, 0})
 				end
 			end
 		end,
@@ -344,7 +358,9 @@ function Library:object(class, properties)
 		if customHandlers[property] then
 			customHandlers[property](value)
 		else
-			localObject[property] = value
+			pcall(function()
+				localObject[property] = value
+			end)
 		end
 	end
 
@@ -371,7 +387,7 @@ function Library:show(state)
 	else		
 		self.mainFrame:fade(not state, self.mainFrame.BackgroundColor3, 0.15)
 		wait(0.1)
-		self.mainFrame:tween{Size = UDim2.new(), Length = 0.25}
+		self.mainFrame:tween({Size = UDim2.new(), Length = 0.25})
 	end
 end
 
@@ -387,30 +403,15 @@ function Library:lighten(color, f)
 	return Color3.fromHSV(h, math.clamp(s*f, 0, 1), math.clamp(v/f, 0, 1))
 end
 
---[[ old lighten/darken functions, may revert if contrast gets fucked up
-
-	function Library:darken(color, f)
-		local h, s, v = Color3.toHSV(color)
-		f = f or 15
-		return Color3.fromHSV(h, s, math.clamp(v - (f/255), 0, 1))
-	end
-
-	function Library:lighten(color, f)
-		local h, s, v = Color3.toHSV(color)
-		f = f or 15
-		return Color3.fromHSV(h, s, math.clamp(v + (f/255), 0, 1))
-	end
-	
-]]
-
 local updateSettings = function() end
 
 function Library:set_status(txt)
-	self.statusText.Text = txt
+	if self.statusText then
+		self.statusText.Text = txt
+	end
 end
 
 function Library:create(options)
-
 	local settings = {
 		Theme = "Dark"
 	}
@@ -428,18 +429,18 @@ function Library:create(options)
 	end
 
 	options = self:set_defaults({
-	   Name = "VerseUI",
-	   Size = UDim2.fromOffset(600, 400),
-	   Theme = self.Themes[settings.Theme],
-	   Link = "https://roblox.com/games/" .. idgry .. "/" .. nazwagry .. "/VerseUI"
-    }, options)
+		Name = "VerseUI",
+		Size = UDim2.fromOffset(600, 400),
+		Theme = self.Themes[settings.Theme],
+		Link = "https://roblox.com/games/" .. idgry .. "/" .. nazwagry .. "/VerseUI"
+	}, options)
 
 	if getgenv and getgenv().VerseUI then
-		getgenv():VerseUI()
+		if type(getgenv().VerseUI) == "function" then
+			getgenv().VerseUI()
+		end
 		getgenv().VerseUI = nil
 	end
-
-
 
 	if options.Link:sub(-1, -1) == "/" then
 		options.Link = options.Link:sub(1, -2)
@@ -476,8 +477,6 @@ function Library:create(options)
 	}):round(10)
 
 	core:fade(true, nil, 0.2, true)
-
-
 	core:fade(false, nil, 0.4)
 	core:tween({Size = options.Size, Length = 0.3}, function()
 		core.ClipsDescendants = false
@@ -491,47 +490,31 @@ function Library:create(options)
 		if S then
 			core.Active = true;
 
-			Event:connect(function()
-				local Input = core.InputBegan:connect(function(Key)
+			Event:Connect(function()
+				local Input = core.InputBegan:Connect(function(Key)
 					if Key.UserInputType == Enum.UserInputType.MouseButton1 then
 						local ObjectPosition = Vector2.new(Mouse.X - core.AbsolutePosition.X, Mouse.Y - core.AbsolutePosition.Y)
-						while RunService.RenderStepped:wait() and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
-
+						while RunService.RenderStepped:Wait() and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
 							if Library.LockDragging then
 								local FrameX, FrameY = math.clamp(Mouse.X - ObjectPosition.X, 0, gui.AbsoluteSize.X - core.AbsoluteSize.X), math.clamp(Mouse.Y - ObjectPosition.Y, 0, gui.AbsoluteSize.Y - core.AbsoluteSize.Y)
-								core:tween{
+								core:tween({
 									Position = UDim2.fromOffset(FrameX + (core.Size.X.Offset * core.AnchorPoint.X), FrameY + (core.Size.Y.Offset * core.AnchorPoint.Y)),
 									Length = Library.DragSpeed
-								}
+								})
 							else
-								core:tween{
+								core:tween({
 									Position = UDim2.fromOffset(Mouse.X - ObjectPosition.X + (core.Size.X.Offset * core.AnchorPoint.X), Mouse.Y - ObjectPosition.Y + (core.Size.Y.Offset * core.AnchorPoint.Y)),
 									Length = Library.DragSpeed	
-								}
+								})
 							end	
-							--[[core.AbsoluteObject:TweenPosition(
-								UDim2.new(0, Mouse.X - ObjectPosition.X + (core.Size.X.Offset * core.AnchorPoint.X), 0, Mouse.Y - ObjectPosition.Y + (core.Size.Y.Offset * core.AnchorPoint.Y)),           
-								Enum.EasingDirection.In,
-								Enum.EasingStyle.Sine,
-								Library.DragSpeed,
-								true
-								
-								--
-								core:tween{
-								Position = UDim2.new(0, Mouse.X - ObjectPosition.X + (core.Size.X.Offset * core.AnchorPoint.X), 0, Mouse.Y - ObjectPosition.Y + (core.Size.Y.Offset * core.AnchorPoint.Y)),
-								Direction = Enum.EasingDirection.Out,
-								Style = Enum.EasingStyle.Quad,
-								Length = Library.DragSpeed
-							}
-							)]]
 						end
 					end
 				end)
 
 				local Leave
-				Leave = core.MouseLeave:connect(function()
-					Input:disconnect()
-					Leave:disconnect()
+				Leave = core.MouseLeave:Connect(function()
+					Input:Disconnect()
+					Leave:Disconnect()
 				end)
 			end)
 		end
@@ -567,12 +550,12 @@ function Library:create(options)
 		AnchorPoint = Vector2.new(1)
 	})
 
-	closeButton.MouseEnter:connect(function()
-		closeButton:tween{ImageColor3 = Color3.fromRGB(255, 124, 142)}
+	closeButton.MouseEnter:Connect(function()
+		closeButton:tween({ImageColor3 = Color3.fromRGB(255, 124, 142)})
 	end)
 
-	closeButton.MouseLeave:connect(function()
-		closeButton:tween{ImageColor3 = Library.CurrentTheme.StrongText}
+	closeButton.MouseLeave:Connect(function()
+		closeButton:tween({ImageColor3 = Library.CurrentTheme.StrongText})
 	end)
 
 	local function closeUI()
@@ -588,7 +571,7 @@ function Library:create(options)
 		getgenv().VerseUI = closeUI
 	end
 
-	closeButton.MouseButton1Click:connect(function()
+	closeButton.MouseButton1Click:Connect(function()
 		closeUI()
 	end)
 
@@ -600,7 +583,7 @@ function Library:create(options)
 
 	local searchIcon = urlBar:object("ImageLabel", {
 		AnchorPoint = Vector2.new(0, .5),
-		Position = UDim2.new(0, 5,0.5, 0);
+		Position = UDim2.new(0, 5,0.5, 0),
 		Theme = {ImageColor3 = "Tertiary"},
 		Size = UDim2.fromOffset(16, 16),
 		Image = "http://www.roblox.com/asset/?id=8497489946",
@@ -646,7 +629,7 @@ function Library:create(options)
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.new(0.5, 0, 1, -20),
 		Size = UDim2.new(1, -10, 1, -86)
-	}):round(7) -- Sept
+	}):round(7)
 
 	local status = core:object("TextLabel", {
 		AnchorPoint = Vector2.new(0, 1),
@@ -661,7 +644,7 @@ function Library:create(options)
 	})
 
 	local homeButton = tabButtons:object("TextButton", {
-		Name = "hehehe siuuuuuuuuu",
+		Name = "Home",
 		BackgroundTransparency = 0,
 		Theme = {BackgroundColor3 = "Secondary"},
 		Size = UDim2.new(0, 125, 0, 25)
@@ -695,6 +678,16 @@ function Library:create(options)
 		BackgroundTransparency = 1
 	})
 
+	local homePageLayout = homePage:object("UIListLayout", {
+		Padding = UDim.new(0, 10),
+		FillDirection = Enum.FillDirection.Vertical,
+		HorizontalAlignment = Enum.HorizontalAlignment.Center
+	})
+
+	homePage:object("UIPadding", {
+		PaddingTop = UDim.new(0, 10)
+	})
+
 	local tabs = {}
 	selectedTab = homeButton
 
@@ -704,27 +697,26 @@ function Library:create(options)
 		local down = false
 		local hovered = false
 
-		homeButton.MouseEnter:connect(function()
+		homeButton.MouseEnter:Connect(function()
 			hovered = true
-			homeButton:tween{BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or 0.3}
+			homeButton:tween({BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or 0.3})
 		end)
 
-		homeButton.MouseLeave:connect(function()
+		homeButton.MouseLeave:Connect(function()
 			hovered = false
-			homeButton:tween{BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or 1}
+			homeButton:tween({BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or 1})
 		end)
 
-		homeButton.MouseButton1Down:connect(function()
+		homeButton.MouseButton1Down:Connect(function()
 			down = true
-			homeButton:tween{BackgroundTransparency = 0}
+			homeButton:tween({BackgroundTransparency = 0})
 		end)
 
-		UserInputService.InputEnded:connect(function(key)
+		UserInputService.InputEnded:Connect(function(key)
 			if key.UserInputType == Enum.UserInputType.MouseButton1 then
 				down = false
-				homeButton:tween{BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or (hovered and 0.3) or 1}
+				homeButton:tween({BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or (hovered and 0.3) or 1})
 			end
-
 		end)
 
 		homeButton.MouseButton1Click:Connect(function()
@@ -733,7 +725,7 @@ function Library:create(options)
 				local button = tabInfo[2]
 				page.Visible = false
 			end
-			selectedTab:tween{BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or 1}
+			selectedTab:tween({BackgroundTransparency = ((selectedTab == homeButton) and 0.15) or 1})
 			selectedTab = homeButton
 			homePage.Visible = true
 			homeButton.BackgroundTransparency = 0
@@ -742,16 +734,6 @@ function Library:create(options)
 	end
 
 	self.SelectedTabButton = homeButton
-
-	local homePageLayout = homePage:object("UIListLayout", {
-		Padding = UDim.new(0, 10),
-		FillDirection = Enum.FillDirection.Vertical,
-		HorizontalAlignment = Enum.HorizontalAlignment.Center
-	})
-
-	local homePagePadding = homePage:object("UIPadding", {
-		PaddingTop = UDim.new(0, 10)
-	})
 
 	local profile = homePage:object("Frame", {
 		AnchorPoint = Vector2.new(0, .5),
@@ -767,11 +749,12 @@ function Library:create(options)
 		Size = UDim2.fromOffset(80, 80)
 	}):round(100)
 
-	local displayName; do
+	local displayName
+	do
 		local h, s, v = Color3.toHSV(options.Theme.Tertiary)
 		local c = self:lighten(options.Theme.Tertiary, 20)
 
-		local displayName = profile:object("TextLabel", {
+		displayName = profile:object("TextLabel", {
 			RichText = true,
 			Text = "Welcome, <font color='rgb(" ..  math.floor(c.R*255) .. "," .. math.floor(c.G*255) .. "," .. math.floor(c.B*255) .. ")'> <b>" .. LocalPlayer.DisplayName .. "</b> </font>",
 			TextScaled = true,
@@ -851,9 +834,8 @@ function Library:create(options)
 	quickAccess:object("UIPadding", {
 		PaddingBottom = UDim.new(0, 10),
 		PaddingLeft = UDim.new(0, 70),
-		PaddingRight = UDim.new(0, 70),
-		PaddingTop = UDim.new(0, 5)
-	})
+		PaddingRight = UDim.new(0, 70)
+})
 
 
 	local mt = setmetatable({
@@ -3138,8 +3120,6 @@ keybindDisplay.MouseButton1Click:Connect(function()
 end)
 
 return methods
-
-end
 
 function Library:prompt(options)
 	options = self:set_defaults({
